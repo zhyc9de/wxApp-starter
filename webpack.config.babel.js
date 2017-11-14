@@ -6,12 +6,10 @@ import {
     EnvironmentPlugin,
     optimize,
 } from 'webpack';
+import CopyWebpackPlugin from 'copy-webpack-plugin';
 import WXAppWebpackPlugin, {
     Targets,
 } from 'wxapp-webpack-plugin';
-import {
-    isDate
-} from 'util';
 
 const isDev = process.env.NODE_ENV !== 'production';
 
@@ -103,6 +101,11 @@ export default (env = {}) => {
                 clear: !isDev,
             }),
             new optimize.ModuleConcatenationPlugin(),
+            new CopyWebpackPlugin([{
+                context: 'src/static',
+                from: '**/*',
+                to: 'static'
+            }, ])
             // new IgnorePlugin(/vertx/),
         ].filter(Boolean),
         devtool: isDev ? 'source-map' : false,
