@@ -1,0 +1,6 @@
+{
+    "navigationBarTitleText": "Home Page",
+    "usingComponents": {
+        "square": "../../components/square/square"
+    }
+}

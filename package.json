@@ -1,0 +1,30 @@
+{
+    "name": "wxapp-starter",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "dev": "webpack --watch",
+        "build": "NODE_ENV=production webpack -p",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "babel-cli": "^6.26.0",
+        "babel-core": "^6.26.0",
+        "babel-loader": "^7.1.2",
+        "babel-plugin-transform-runtime": "^6.23.0",
+        "babel-preset-env": "^1.6.1",
+        "eslint": "^4.11.0",
+        "eslint-config-airbnb-base": "^12.1.0",
+        "eslint-import-resolver-webpack": "^0.8.3",
+        "eslint-plugin-import": "^2.8.0",
+        "file-loader": "^1.1.5",
+        "less": "^2.7.3",
+        "less-loader": "^4.0.5",
+        "webpack": "^3.8.1",
+        "wxapp-webpack-plugin": "^0.16.0",
+        "wxml-loader": "^0.1.0"
+    }
+}
