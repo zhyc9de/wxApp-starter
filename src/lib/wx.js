@@ -32,7 +32,7 @@ Object.keys(wx).forEach((key) => {
         return new Promise((resolve, reject) => {
             args.success = resolve;
             args.fail = reject;
-            wx[key](obj);
+            wx[key](args);
         });
     };
 });
