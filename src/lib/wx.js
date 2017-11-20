@@ -17,7 +17,7 @@ const noPromiseEndswith = /\w+Sync$/;
 const promiseWx = {};
 
 Object.keys(wx).forEach((key) => {
-    if (noPromiseMethods[key] ||
+    if (noPromiseMethods.indexOf('key') >= 0 ||
         noPromiseStartswith.test(key) ||
         noPromiseEndswith.test(key)
     ) {
