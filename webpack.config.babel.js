@@ -6,6 +6,7 @@ import {
     EnvironmentPlugin,
     optimize,
 } from 'webpack';
+import UglifyJsPlugin from 'uglifyjs-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import WXAppWebpackPlugin, {
     Targets,
@@ -84,6 +85,26 @@ export default (env = {}) => {
                             loader: 'wxml-loader',
                             options: {
                                 root: resolve('src'),
+                                minimize: !isDev,
+                            },
+                        },
+                    ],
+                },
+                {
+                    test: /\.wxml$/,
+                    include: /node_modules/,
+                    use: [{
+                            loader: 'file-loader',
+                            options: {
+                                useRelativePath: false,
+                                name: '[name].[ext]',
+                            },
+                        },
+                        {
+                            loader: 'wxml-loader',
+                            options: {
+                                root: resolve('src'),
+                                minimize: !isDev,
                             },
                         },
                     ],
@@ -99,6 +120,15 @@ export default (env = {}) => {
             }),
             new WXAppWebpackPlugin({
                 clear: !isDev,
+            }),
+            new UglifyJsPlugin({
+                parallel: true,
+                sourceMap: isDev,
+                uglifyOptions: {
+                    ecma: 6,
+                    compress: !isDev,
+                    warnings: !isDev,
+                }
             }),
             new optimize.ModuleConcatenationPlugin(),
             new CopyWebpackPlugin([{

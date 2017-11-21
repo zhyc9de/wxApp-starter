@@ -5,7 +5,7 @@
     "main": "index.js",
     "scripts": {
         "dev": "webpack --watch",
-        "build": "NODE_ENV=production webpack -p",
+        "build": "NODE_ENV=production webpack",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "author": "",
@@ -24,6 +24,7 @@
         "file-loader": "^1.1.5",
         "less": "^2.7.3",
         "less-loader": "^4.0.5",
+        "uglifyjs-webpack-plugin": "^1.1.0",
         "webpack": "^3.8.1",
         "wxapp-webpack-plugin": "^0.16.0",
         "wxml-loader": "^0.1.0"
