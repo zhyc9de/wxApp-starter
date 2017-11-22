@@ -85,7 +85,7 @@ export default (env = {}) => {
                             loader: 'wxml-loader',
                             options: {
                                 root: resolve('src'),
-                                minimize: !isDev,
+                                // minimize: !isDev, TODO: bug fix: https://github.com/Cap32/wxml-loader/issues/5#issuecomment-346028264
                             },
                         },
                     ],
@@ -104,7 +104,7 @@ export default (env = {}) => {
                             loader: 'wxml-loader',
                             options: {
                                 root: resolve('src'),
-                                minimize: !isDev,
+                                // minimize: !isDev,
                             },
                         },
                     ],

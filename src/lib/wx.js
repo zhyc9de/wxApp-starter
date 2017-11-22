@@ -9,8 +9,8 @@ const noPromiseMethods = [
     'getRecorderManager',
     'canIUse',
 ];
-// 还有以on* create* stop* pause* close* show* hide* 开头的方法
-const noPromiseStartswith = /^(on|create|stop|pause|close|show|hide)/;
+// 还有以on* create* stop* pause* close* hide* 开头的方法
+const noPromiseStartswith = /^(on|create|stop|pause|close|hide)/;
 // 以Sync结尾的方法
 const noPromiseEndswith = /\w+Sync$/;
 
