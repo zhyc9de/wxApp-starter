@@ -65,9 +65,9 @@ const bo = {
         if (typeof page[trigger] === 'function') {
             const fn = page[trigger];
             if (typeof fn.then === 'function') {
-                await fn(options);
+                await fn.call(page, options);
             } else {
-                fn(options);
+                fn.call(page, options);
             }
         } else if (trigger === undefined) {
             // pass
