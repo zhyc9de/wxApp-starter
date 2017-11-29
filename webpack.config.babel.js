@@ -138,7 +138,7 @@ export default (env = {}) => {
             }, ])
             // new IgnorePlugin(/vertx/),
         ].filter(Boolean),
-        devtool: isDev ? 'cheap-module-eval-source-map' : false,
+        devtool: isDev ? 'source-map' : false,
         resolve: {
             modules: [resolve('src'), 'node_modules'],
         },
