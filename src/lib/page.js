@@ -33,7 +33,7 @@ const bo = {
             options,
         };
         const routerName = url.charAt(0) === '/' ? url.substr(1) : url; // 去除开头的'/'
-        if (url.startsWith('pages/index')) { // 目前约定当且仅当为pages/index中的页面时，需要switchTab
+        if (url.startsWith('pages/tab')) { // 目前约定当且仅当为pages/tab中的页面时，需要switchTab
             wx.switchTab({
                 url,
             });
