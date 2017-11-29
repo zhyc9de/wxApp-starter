@@ -3,9 +3,12 @@
         "pages/index/index"
     ],
     "window": {
-        "navigationBarTitleText": "wxApp Starter"
+        "navigationBarTitleText": "wxApp Starter",
+        "navigationBarBackgroundColor": "#3f9dfc",
+        "navigationBarTextStyle": "white",
+        "enablePullDownRefresh": false
     },
     "networkTimeout": {
-        "request": 10
+        "request": 10000
     }
 }
