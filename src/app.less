@@ -1,0 +1,30 @@
+@import './assets/less/base.less';
+// 去除滚动条
+::-webkit-scrollbar {
+    height: 0;
+    width: 0;
+    color: transparent;
+}
+
+view,
+text {
+    font-size: @text-color;
+    color: @text-color;
+}
+
+page {
+    background-color: @page-color;
+}
+
+.inline-text-hidden {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mutil-text-hidden {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1; // 要用就覆盖上去吧
+    overflow: hidden;
+}
