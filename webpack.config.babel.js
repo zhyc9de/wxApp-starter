@@ -121,7 +121,7 @@ export default (env = {}) => {
             new WXAppWebpackPlugin({
                 clear: !isDev,
             }),
-            new UglifyJsPlugin({
+            isDev ? null : new UglifyJsPlugin({
                 parallel: true,
                 sourceMap: isDev,
                 uglifyOptions: {
