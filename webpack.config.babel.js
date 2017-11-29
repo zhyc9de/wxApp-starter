@@ -92,7 +92,7 @@ export default (env = {}) => {
                 },
                 {
                     test: /\.wxml$/,
-                    include: /node_modules/,
+                    include: /node_modules/, // 用于支持npm版的WxParse
                     use: [{
                             loader: 'file-loader',
                             options: {
@@ -138,7 +138,7 @@ export default (env = {}) => {
             }, ])
             // new IgnorePlugin(/vertx/),
         ].filter(Boolean),
-        devtool: isDev ? 'source-map' : false,
+        devtool: isDev ? 'cheap-module-eval-source-map' : false,
         resolve: {
             modules: [resolve('src'), 'node_modules'],
         },

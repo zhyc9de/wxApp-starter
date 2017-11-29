@@ -1,6 +1,9 @@
+import {
+    WxPage,
+} from '../../lib';
 import playing from '../..//bo/playing';
 
-Page({
+WxPage({
     data: {
         playing,
         textLen: 0,
