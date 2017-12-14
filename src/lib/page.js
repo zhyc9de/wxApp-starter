@@ -1,3 +1,6 @@
+import Event from './event';
+import Store from './store';
+
 const bo = {
     pages: new Map(),
 
@@ -12,23 +15,22 @@ const bo = {
 };
 
 // 重构的page
-export function WxPage(params) {
+export function WxPage(router, params) {
     const newOptions = Object.assign({}, params);
     const nullFoo = () => {};
 
-    newOptions.oldLoad = newOptions.onLoad || nullFoo;
-    newOptions.onLoad = function () {
-        bo.pages.set(this.route, this);
-        this.oldLoad();
-    };
+    newOptions.oldShow = params.onShow || nullFoo;
+    newOptions.onShow = async function () {
+        const navData = Store.getFlush('afterload');
+        if (navData) {
+            Event.emitPage(navData.action, navData.options, this);
+        }
 
-    newOptions.oldUnload = newOptions.onUnload || nullFoo;
-    newOptions.onUnload = function () {
-        bo.pages.delete(this.route, this);
-        this.oldUnload();
+        this.oldShow();
     };
-
-    return Page(newOptions);
+    Page(newOptions);
+    // 只是存个原型
+    bo.pages.set(router, params);
 }
 
 

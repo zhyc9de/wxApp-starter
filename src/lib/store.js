@@ -2,6 +2,7 @@ import wx from './wx';
 
 export default {
     state: new Map(),
+    cache: new Map(),
 
     async init(keys = []) {
         const getKeys = [];
@@ -65,5 +66,15 @@ export default {
 
     clear() {
         wx.clearStorage();
+    },
+
+    setFlush(key, awaitFunc) {
+        this.cache.set(key, awaitFunc);
+    },
+
+    getFlush(key) {
+        const awaitFunc = this.cache.get(key);
+        this.cache.delete(key);
+        return awaitFunc;
     },
 };

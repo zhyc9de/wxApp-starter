@@ -2,13 +2,9 @@ import {
     WxPage,
 } from '../../lib';
 
-WxPage({
+WxPage('pages/index/index', {
     data: {
         textLen: 0,
-    },
-
-    onLoad() {
-
     },
 
     onInput(e) {
