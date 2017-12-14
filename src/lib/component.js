@@ -36,36 +36,22 @@ const bo = {
         const cPath = `${currPage.route}/components/${cName}`;
         return this.components.get(cPath) || [];
     },
-
-    async emit(cName, trigger, options) {
-        const components = this.get(cName);
-        const awaitList = [];
-        for (let i = 0; i < components.length; i += 1) {
-            const fn = components[i][trigger];
-            if (typeof fn.then === 'function') {
-                awaitList.push(fn.call(components[i], options));
-            } else {
-                fn.call(components[i], options);
-            }
-        }
-        if (awaitList.length > 0) {
-            await Promise.all(awaitList);
-        }
-    },
 };
 
 export function WxComponent(params) {
     const newOptions = Object.assign({}, params);
     const nullFoo = () => {};
 
-    newOptions.oldReady = params.ready || nullFoo;
+    newOptions.oldAttached = params.attached || nullFoo;
     newOptions.oldDetached = params.detached || nullFoo;
-    newOptions.ready = function () {
-        newOptions.oldReady();
+    newOptions.attached = function () {
+        this.oldAttached();
+        this.is = newOptions.is;
         bo.add(this);
     };
     newOptions.detached = function () {
-        newOptions.oldDetached();
+        this.oldDetached();
+        this.is = newOptions.is;
         bo.remove(this);
     };
     return Component(newOptions);

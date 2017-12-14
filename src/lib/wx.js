@@ -1,4 +1,4 @@
-// promise way copy from labrador
+// promisify copy from labrador
 
 // 特别指定的wx对象中不进行Promise封装的方法
 // 除了以下不封住的函数
@@ -29,6 +29,14 @@ Object.keys(wx).forEach((key) => {
     // 其余方法自动Promise化
     promiseWx[key] = (obj) => {
         const args = obj || {};
+        if (key === 'showToast') { // 给showtoast增加默认参数
+            args.duration = 1100;
+            if (args.icon === 'error') {
+                args.image = '/static/icon/error.png';
+            } else if (args.icon === 'warning') {
+                args.image = '/static/icon/warning.png';
+            }
+        }
         return new Promise((resolve, reject) => {
             args.success = resolve;
             args.fail = reject;

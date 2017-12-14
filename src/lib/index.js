@@ -1,17 +1,19 @@
 import wx from './wx';
 import store from './store';
-import navigate, {
+import route from './route';
+import event from './event';
+import {
     WxPage,
 } from './page';
-import comMgr, {
+import {
     WxComponent,
 } from './component';
 
 module.exports = {
     wx,
     store,
-    navigate,
+    route,
+    event,
     WxPage,
-    comMgr,
     WxComponent,
 };

@@ -51,7 +51,7 @@ export default (env = {}) => {
         module: {
             rules: [{
                     test: /\.js$/,
-                    include: /src/,
+                    include: /(src|node_modules)/,
                     use: [{
                         loader: 'babel-loader?cacheDirectory=true',
                     }],
@@ -123,11 +123,13 @@ export default (env = {}) => {
             }),
             isDev ? null : new UglifyJsPlugin({
                 parallel: true,
-                sourceMap: isDev,
+                sourceMap: false,
                 uglifyOptions: {
                     ecma: 6,
-                    compress: !isDev,
-                    warnings: !isDev,
+                    compress: true,
+                    warnings: {
+                        drop_console: true,
+                    },
                 }
             }),
             new optimize.ModuleConcatenationPlugin(),

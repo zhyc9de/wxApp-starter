@@ -1,5 +1,4 @@
 <view class="container">
-    <image src="../../assets/img/emoji-24.png" />
     <input class="input" bindinput="onInput" />
     <square len="{{ textLen }}" bind:hadClick="hadClick"></square>
     <view>偷偷拿到正确字数{{ playing.title }}</view>

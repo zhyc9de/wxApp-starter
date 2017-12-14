@@ -1,12 +1,14 @@
 import {
     WxPage,
 } from '../../lib';
-import playing from '../..//bo/playing';
 
 WxPage({
     data: {
-        playing,
         textLen: 0,
+    },
+
+    onLoad() {
+
     },
 
     onInput(e) {
@@ -16,9 +18,6 @@ WxPage({
     },
 
     hadClick() {
-        console.log(playing);
-        this.setData({
-            playing,
-        });
+
     },
 });
