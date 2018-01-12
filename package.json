@@ -26,7 +26,7 @@
         "less-loader": "^4.0.5",
         "uglifyjs-webpack-plugin": "^1.1.0",
         "webpack": "^3.8.1",
-        "wxapp-webpack-plugin": "^0.17.1",
-        "wxml-loader": "^0.1.0"
+        "wxapp-webpack-plugin": "^0.17.2",
+        "wxml-loader": "^0.1.1"
     }
 }

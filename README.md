@@ -4,13 +4,17 @@
 
 ### webpack
 
-just dev with `npm run dev`
+support npm, less and webpack plugin
 
-### promisify
+- `npm run dev`, auto rebuild
+- `npm run build`, build js with compress and uglify
 
-将异步函数封装成promise，方便使用async/await
+### 对wx的修改
 
-同时给showToast加上更多设置
+- 将异步函数封装成promise，方便使用async/await
+- 给showToast加上更多设置
+- add func waitMin
+- add func removeByIndex
 
 ### navigation && preload
 

@@ -1,6 +1,3 @@
-import Event from './event';
-import Store from './store';
-
 const bo = {
     pages: new Map(),
 
@@ -12,6 +9,18 @@ const bo = {
         }
         return undefined;
     },
+
+    // 给定绝对路径（不需要包含开头的斜杠）, 尝试从页面栈中拿到这个页面的对象
+    getPageInStack(absPath) {
+        const pages = getCurrentPages();
+        for (let i = 0; i < pages.length; i += 1) {
+            if (pages[i].route === absPath) {
+                return pages[i];
+            }
+        }
+        return null;
+    },
+
 };
 
 // 重构的page
@@ -19,15 +28,8 @@ export function WxPage(router, params) {
     const newOptions = Object.assign({}, params);
     const nullFoo = () => {};
 
-    newOptions.oldShow = params.onShow || nullFoo;
-    newOptions.onShow = async function () {
-        const navData = Store.getFlush('afterload');
-        if (navData) {
-            Event.emitPage(navData.action, navData.options, this);
-        }
+    // TODO: 是否要保证加载顺序
 
-        this.oldShow();
-    };
     Page(newOptions);
     // 只是存个原型
     bo.pages.set(router, params);

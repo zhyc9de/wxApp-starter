@@ -1,8 +1,5 @@
+import wx from './wx';
 import PageBO from './page';
-
-const removeByIndex = (l, index) => {
-    l.slice(0, index).concat(l.slice(index + 1));
-};
 
 const bo = {
     components: new Map(),
@@ -24,7 +21,7 @@ const bo = {
         for (let i = 0; i < components.length; i += 1) {
             const item = components[i];
             if (item.__wxWebviewId__ === c.__wxWebviewId__) {
-                this.components.set(cPath, removeByIndex(components, i));
+                this.components.set(cPath, wx.removeByIndex(components, i));
                 break;
             }
         }
@@ -42,13 +39,16 @@ export function WxComponent(params) {
     const newOptions = Object.assign({}, params);
     const nullFoo = () => {};
 
+    // 挂载对象
     newOptions.oldAttached = params.attached || nullFoo;
-    newOptions.oldDetached = params.detached || nullFoo;
     newOptions.attached = function () {
         this.oldAttached();
         this.is = newOptions.is;
         bo.add(this);
     };
+
+    // 卸载对象
+    newOptions.oldDetached = params.detached || nullFoo;
     newOptions.detached = function () {
         this.oldDetached();
         this.is = newOptions.is;

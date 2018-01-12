@@ -14,7 +14,27 @@ const noPromiseStartswith = /^(on|create|stop|pause|close|hide)/;
 // 以Sync结尾的方法
 const noPromiseEndswith = /\w+Sync$/;
 
-const promiseWx = {};
+const promiseWx = {
+    async waitMin(req, min = 600, max = 10000) {
+        // 如果在最小时间内完成就resolve
+        // 如果在最大时间内还未完成throw
+        const s1 = new Promise(resolve => setTimeout(resolve, min));
+        const s2 = new Promise((resolve, reject) => {
+            setTimeout(() => reject(new Error('request timeout')), max);
+        });
+        try {
+            await Promise.race([Promise.all([req, s1]), s2]);
+        } catch (err) {
+            console.log(err);
+            throw err; // 继续抛给外面
+        }
+        return req;
+    },
+
+    removeByIndex(l, index) {
+        return l.slice(0, index).concat(l.slice(index + 1));
+    },
+};
 
 Object.keys(wx).forEach((key) => {
     if (noPromiseMethods.indexOf(key) >= 0 ||
