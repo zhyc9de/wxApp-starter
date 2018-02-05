@@ -1,6 +1,7 @@
-const bo = {
-    pages: new Map(),
+import wx from './wx';
+import event from './event';
 
+const bo = {
     // 获取当前页面
     getCurrentPage() {
         const pages = getCurrentPages();
@@ -20,20 +21,37 @@ const bo = {
         }
         return null;
     },
-
 };
 
-// 重构的page
-export function WxPage(router, params) {
-    const newOptions = Object.assign({}, params);
-    const nullFoo = () => {};
+const nullFoo = () => {};
+export function WxPage(o) {
+    const options = Object.assign({}, o);
+    // 加入分享
+    if (!options.onShareAppMessage && !options.disableShare) {
+        options.onShareAppMessage = function () {
+            return wx.getShare();
+        };
+    }
 
-    // TODO: 是否要保证加载顺序
-
-    Page(newOptions);
-    // 只是存个原型
-    bo.pages.set(router, params);
+    const events = Object.getOwnPropertyNames(options)
+        .filter(func => func.startsWith('onEvent'));
+    // onLoad的时候，注册监听事件
+    options.oldLoad = options.onLoad || nullFoo;
+    options.onLoad = async function () {
+        for (let i = 0; i < events.length; i += 1) {
+            event.putNotice(events[i], this.route, this[events[i]]);
+        }
+        this.oldLoad();
+    };
+    // onUnload，移除事件
+    options.OldUnload = options.onUnload || nullFoo;
+    options.onUnload = async function () {
+        for (let i = 0; i < events.length; i += 1) {
+            event.removeNotice(events[i], this.route);
+        }
+        this.OldUnload();
+    };
+    Page(options);
 }
-
 
 export default bo;

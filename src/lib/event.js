@@ -1,22 +1,49 @@
-import PageBO from './page';
-import ComponentBO from './component';
-
 export default {
-    emitPage(trigger, options, defaultPage = undefined) {
-        const page = defaultPage || PageBO.getCurrentPage();
-        if (typeof page[trigger] === 'function') {
-            const fn = page[trigger];
-            fn.call(page, options);
-        } else {
-            console.info(page, `不存在${trigger}函数`);
+    // 待通知队列
+    notices: new Map(),
+
+    // 加入监听 TODO: 检查是否重复加入
+    putNotice(name, page, func) {
+        console.log(`监听 ${page}:${name}`);
+        if (!this.notices.has(name)) {
+            this.notices.set(name, []);
         }
+        this.notices.get(name).push({
+            page,
+            func,
+        });
     },
 
-    emitComponents(cName, trigger, options) {
-        const components = ComponentBO.get(cName);
-        for (let i = 0; i < components.length; i += 1) {
-            const fn = components[i][trigger];
-            fn.call(components[i], options);
+    // 仅监听一次
+    putNoticeOnce(name, page, func) {
+        console.log(`监听一次 ${page}:${name}`);
+        if (!this.notices.has(name)) {
+            this.notices.set(name, []);
+        }
+        this.notices.get(name).push({
+            page,
+            func,
+            once: true,
+        });
+    },
+
+    // 页面注销了就要把当前页面所有的事件取消注册
+    removeNotice(name, page) {
+        console.log(`取消监听 ${page}:${name}`);
+        this.notices.set(
+            name,
+            this.notices.get(name).filter(item => item.page !== page),
+        );
+    },
+
+    // 触发通知
+    emitNotice(name, page = undefined, ...args) {
+        try { // 执行
+            this.notices.get(name)
+                .filter(item => (page ? true : item.page === page))
+                .map(func => func(...args)); // 可能要用call？
+        } catch (err) {
+            console.log(err);
         }
     },
 };

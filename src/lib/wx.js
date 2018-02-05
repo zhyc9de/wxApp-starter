@@ -8,6 +8,7 @@ const noPromiseMethods = [
     'getBackgroundAudioManager',
     'getRecorderManager',
     'canIUse',
+    'createCanvasContext',
 ];
 // 还有以on* create* stop* pause* close* hide* 开头的方法
 const noPromiseStartswith = /^(on|create|stop|pause|close|hide)/;
@@ -15,12 +16,19 @@ const noPromiseStartswith = /^(on|create|stop|pause|close|hide)/;
 const noPromiseEndswith = /\w+Sync$/;
 
 const promiseWx = {
-    async waitMin(req, min = 600, max = 10000) {
-        // 如果在最小时间内完成就resolve
-        // 如果在最大时间内还未完成throw
+    /**
+     * 至少等待min后，才能完成promise，同时保证不超时
+     *
+     * @param {Promise} req promise
+     * @param {number} [min=600] 最少等待时间
+     * @param {number} [max=10000] 最多等待时间
+     * @param {string} [timeoutError='request timeout'] 超时错误信息
+     * @returns {Promise}
+     */
+    async waitMin(req, min = 600, max = 10000, timeoutError = 'request timeout') {
         const s1 = new Promise(resolve => setTimeout(resolve, min));
         const s2 = new Promise((resolve, reject) => {
-            setTimeout(() => reject(new Error('request timeout')), max);
+            setTimeout(() => reject(new Error(timeoutError)), max);
         });
         try {
             await Promise.race([Promise.all([req, s1]), s2]);
@@ -34,6 +42,62 @@ const promiseWx = {
     removeByIndex(l, index) {
         return l.slice(0, index).concat(l.slice(index + 1));
     },
+
+    // 封装页面跳转
+    defaultTabDir: 'tab',
+
+    /**
+     * 切换切面
+     * 如果是tab页，那么直接switchTab
+     * 如果非tab页，先检测页面栈，
+     *
+     * @param {string} url 跳转页面
+     * @param {boolean} [reLaunch=false] 是否使用reLaunch
+     * @returns {Promise}
+     */
+    go(url, reLaunch = false) {
+        let goFunc = reLaunch ? this.reLaunch : this.navigateTo;
+
+        // 去除开头的'/'
+        const routerName = url.charAt(0) === '/' ? url.substr(1) : url;
+        // tab页需要switchTab
+        if (url.startsWith(`pages/${this.defaultTabDir}`)) {
+            goFunc = this.switchTab;
+        } else { // 遍历页面栈
+            const pages = getCurrentPages();
+            for (let i = pages.length - 1; i >= 0; i -= 1) {
+                if (pages[i].route === routerName) {
+                    if (i === pages.length - 1) {
+                        pages[i].onShow();
+                    } else {
+                        return goFunc.navigateBack({
+                            delta: (pages.length - i) - 1,
+                        });
+                    }
+                }
+            }
+        }
+
+        // 真实跳转
+        return goFunc({
+            url,
+        });
+    },
+
+    // 获取默认分享
+    defaultShare: undefined,
+    curShare: undefined,
+    // 设置临时分享内容
+    setShare(share) {
+        this.curShare = share;
+    },
+    // 获取分享
+    getShare() {
+        const info = this.curShare || Object.assign({}, this.defaultShare);
+        this.curShare = undefined;
+        return info;
+    },
+
 };
 
 Object.keys(wx).forEach((key) => {
@@ -50,7 +114,9 @@ Object.keys(wx).forEach((key) => {
     promiseWx[key] = (obj) => {
         const args = obj || {};
         if (key === 'showToast') { // 给showtoast增加默认参数
-            args.duration = 1100;
+            if (!args.duration) {
+                args.duration = 1100;
+            }
             if (args.icon === 'error') {
                 args.image = '/static/icon/error.png';
             } else if (args.icon === 'warning') {

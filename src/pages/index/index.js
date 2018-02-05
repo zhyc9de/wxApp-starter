@@ -2,7 +2,7 @@ import {
     WxPage,
 } from '../../lib';
 
-WxPage('pages/index/index', {
+WxPage({
     data: {
         textLen: 0,
     },
