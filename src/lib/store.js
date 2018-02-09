@@ -3,6 +3,13 @@ import wx from './wx';
 export default {
     state: new Map(),
 
+    setStorage(key, data) {
+        wx.setStorage({
+            key,
+            data,
+        });
+    },
+
     async getStorage(key) {
         try {
             const resStorage = await wx.getStorage({
@@ -19,7 +26,7 @@ export default {
             return undefined;
         }
         const res = this.state.get(key);
-        if (res.expireTime >= Date.now()) {
+        if (res.expireTime < 0 || res.expireTime >= Date.now()) {
             return res.data;
         }
         this.state.delete(key);

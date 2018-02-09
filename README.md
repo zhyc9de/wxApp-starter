@@ -11,14 +11,14 @@ support npm, less and webpack plugin
 
 ### Page && Component
 
-- page加上默认的分享函数，`disableShare`可以关闭
+- Page默认加上的分享函数，`disableShare`可以关闭
 - 监听所有`onEvent`开头的函数，调用`event.emit`可以通知事件
 - TODO: 考虑是否要保证加载顺序
 
 ### 对wx的修改
 
 - 将异步函数封装成promise，支持使用async/await
-- 给showToast加上更多设置
+- `showToast`设置默认显示时间1100, icon增加 error,warning 2种默认样式
 - add func `waitMin` 至少等待min后，才能完成promise，同时保证不超时
 - add func `removeByIndex`
 - add func `go` 重新封装了wx自带的路由函数
@@ -27,10 +27,13 @@ support npm, less and webpack plugin
 
 ### event
 
-- 触发事件通知
+- 绑定页面和组件`onEvent`开头的函数，等待触发事件通知
 - TODO: 等待事件完成
 
 ### store
+
+- 建议数据全部维护在这里，减小Page的容量（因为新增page要深拷贝）
+- 封装了有关storage的操作
 
 ## Tips
 

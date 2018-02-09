@@ -1,7 +1,7 @@
 import wx from './wx';
 import store from './store';
 import event from './event';
-import {
+import route, {
     WxPage,
 } from './page';
 import {
@@ -12,6 +12,7 @@ module.exports = {
     wx,
     store,
     event,
+    route,
     WxPage,
     WxComponent,
 };

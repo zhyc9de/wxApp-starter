@@ -67,10 +67,10 @@ const promiseWx = {
             const pages = getCurrentPages();
             for (let i = pages.length - 1; i >= 0; i -= 1) {
                 if (pages[i].route === routerName) {
-                    if (i === pages.length - 1) {
-                        pages[i].onShow();
-                    } else {
-                        return goFunc.navigateBack({
+                    pages[i].onLoad();
+                    pages[i].onShow();
+                    if (i !== pages.length - 1) {
+                        return this.navigateBack({
                             delta: (pages.length - i) - 1,
                         });
                     }
@@ -85,7 +85,9 @@ const promiseWx = {
     },
 
     // 获取默认分享
-    defaultShare: undefined,
+    defaultShare() {
+        return {};
+    },
     curShare: undefined,
     // 设置临时分享内容
     setShare(share) {
@@ -93,7 +95,7 @@ const promiseWx = {
     },
     // 获取分享
     getShare() {
-        const info = this.curShare || Object.assign({}, this.defaultShare);
+        const info = this.curShare || Object.assign({}, this.defaultShare());
         this.curShare = undefined;
         return info;
     },
