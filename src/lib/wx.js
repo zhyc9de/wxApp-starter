@@ -68,8 +68,6 @@ const promiseWx = {
             const pages = getCurrentPages();
             for (let i = pages.length - 1; i >= 0; i -= 1) {
                 if (pages[i].route === routerName) {
-                    pages[i].onLoad(query);
-                    pages[i].onShow();
                     if (i !== pages.length - 1) {
                         console.log('后退刷新');
                         return this.navigateBack({
@@ -77,6 +75,8 @@ const promiseWx = {
                         });
                     }
                     console.log('刷新当前页面');
+                    pages[i].onLoad(query);
+                    pages[i].onShow();
                     return true;
                 }
             }

@@ -41,7 +41,7 @@ export default {
         try { // 执行
             console.log(`执行page ${page} event ${name}`);
             this.notices.get(`onEvent${name}`)
-                .filter(item => (page ? true : item.page === page))
+                .filter(item => (page ? item.that.route === page : true))
                 .map(item => item.func.call(item.that, ...args)); // 可能要用call？
         } catch (err) {
             console.log(err);
