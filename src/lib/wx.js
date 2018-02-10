@@ -53,9 +53,10 @@ const promiseWx = {
      *
      * @param {string} url 跳转页面
      * @param {boolean} [reLaunch=false] 是否使用reLaunch
+     * @param {object} [query={}] querystring
      * @returns {Promise}
      */
-    go(url, reLaunch = false) {
+    go(url, reLaunch = false, query = {}) {
         let goFunc = reLaunch ? this.reLaunch : this.navigateTo;
 
         // 去除开头的'/'
@@ -67,13 +68,16 @@ const promiseWx = {
             const pages = getCurrentPages();
             for (let i = pages.length - 1; i >= 0; i -= 1) {
                 if (pages[i].route === routerName) {
-                    pages[i].onLoad();
+                    pages[i].onLoad(query);
                     pages[i].onShow();
                     if (i !== pages.length - 1) {
+                        console.log('后退刷新');
                         return this.navigateBack({
                             delta: (pages.length - i) - 1,
                         });
                     }
+                    console.log('刷新当前页面');
+                    return true;
                 }
             }
         }
