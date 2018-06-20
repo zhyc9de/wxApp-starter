@@ -1,2 +1,6 @@
-// 文档: https://mp.weixin.qq.com/debug/wxadoc/dev/framework/custom-component/
-Component({});
+import { WxComponent } from '../../lib';
+
+WxComponent({
+    data: {},
+    methods: {},
+});
