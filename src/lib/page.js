@@ -1,34 +1,9 @@
 import wx from './wx';
 import event from './event';
 
-const bo = {
-    getCurrentRoute() {
-        return this.getCurrentPage().route;
-    },
-
-    // 获取当前页面
-    getCurrentPage() {
-        const pages = getCurrentPages();
-        if (pages.length > 0) {
-            return pages[pages.length - 1];
-        }
-        return undefined;
-    },
-
-    // 给定绝对路径（不需要包含开头的斜杠）, 尝试从页面栈中拿到这个页面的对象
-    getPageInStack(absPath) {
-        const pages = getCurrentPages();
-        for (let i = 0; i < pages.length; i += 1) {
-            if (pages[i].route === absPath) {
-                return pages[i];
-            }
-        }
-        return null;
-    },
+const nullFoo = () => {
 };
-
-const nullFoo = () => {};
-export function WxPage(o) {
+export default (o) => {
     const options = Object.assign({}, o);
     // 加入分享
     if (!options.onShareAppMessage && !options.disableShare) {
@@ -44,7 +19,7 @@ export function WxPage(o) {
     options.oldLoad = options.onLoad || nullFoo;
     options.onLoad = async function (query) {
         for (let i = 0; i < events.length; i += 1) {
-            event.putNotice(events[i], this, this[events[i]]);
+            event.put(events[i], this, this[events[i]]);
         }
         this.oldLoad(query);
     };
@@ -52,11 +27,9 @@ export function WxPage(o) {
     options.OldUnload = options.onUnload || nullFoo;
     options.onUnload = async function () {
         for (let i = 0; i < events.length; i += 1) {
-            event.removeNotice(events[i], this);
+            event.remove(events[i], this);
         }
         this.OldUnload();
     };
     Page(options);
-}
-
-export default bo;
+};

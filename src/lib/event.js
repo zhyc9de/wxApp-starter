@@ -1,8 +1,10 @@
+import page from './page';
+
 export default {
     // 待通知队列
     notices: new Map(),
 
-    // 加入监听 TODO: 检查是否重复加入
+    // 加入监听
     put(name, that, func) {
         console.log(`监听 ${that.route}:${name}`);
         if (!this.notices.has(name)) {
@@ -11,19 +13,6 @@ export default {
         this.notices.get(name).push({
             that,
             func,
-        });
-    },
-
-    // 仅监听一次 TODO: 执行完后取消
-    putOnce(name, that, func) {
-        console.log(`监听一次 ${that.route}:${name}`);
-        if (!this.notices.has(name)) {
-            this.notices.set(name, []);
-        }
-        this.notices.get(name).push({
-            that,
-            func,
-            once: true,
         });
     },
 
@@ -37,11 +26,24 @@ export default {
     },
 
     // 触发通知
-    emit(name, page = undefined, ...args) {
+    emit(name, route, ...args) {
         try { // 执行
-            console.log(`执行page ${page} event ${name}`);
-            this.notices.get(`onEvent${name}`)
-                .filter(item => (page ? item.that.route === page : true))
+            console.log(`执行page ${route} event ${name}`);
+            const events = this.notices.get(`onEvent${name}`) || [];
+            events.filter(item => (route ? item.that.route === route : true))
+                .map(item => item.func.call(item.that, ...args));
+        } catch (err) {
+            console.log(err);
+        }
+    },
+
+    // 触发通知
+    emitCurrent(name, ...args) {
+        try { // 执行
+            const currentPage = page.getCurrentRoute();
+            const events = this.notices.get(`onEvent${name}`) || [];
+            console.log(`执行[当前]page ${currentPage} event ${name}, events=`, events);
+            events.filter(item => item.that.route === currentPage)
                 .map(item => item.func.call(item.that, ...args)); // 可能要用call？
         } catch (err) {
             console.log(err);

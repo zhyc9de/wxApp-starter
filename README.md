@@ -21,19 +21,20 @@ support npm, less and webpack plugin
 - `showToast`设置默认显示时间1100, icon增加 error,warning 2种默认样式
 - add func `waitMin` 至少等待min后，才能完成promise，同时保证不超时
 - add func `removeByIndex`
-- add func `go` 重新封装了wx自带的路由函数
-- add func `setShare` 设置临时分享内容
-- add func `getShare` 获取分享内容，优先使用临时分享内容，临时分享内容获取一次后失效
+- add func `goto` 重新封装了wx自带的路由函数 TODO 参数形式没确定
 
 ### event
 
 - 绑定页面和组件`onEvent`开头的函数，等待触发事件通知
-- TODO: 等待事件完成
 
 ### store
 
-- 建议数据全部维护在这里，减小Page的容量（因为新增page要深拷贝）
-- 封装了有关storage的操作
+- TODO 建议数据全部维护在这里
+- TODO 封装了有关storage的操作
+
+### Hermit
+
+- TODO: 文案通过js注入
 
 ## Tips
 

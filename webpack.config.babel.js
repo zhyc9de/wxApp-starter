@@ -1,37 +1,22 @@
-import {
-    resolve,
-} from 'path';
-import {
-    DefinePlugin,
-    EnvironmentPlugin,
-    optimize,
-} from 'webpack';
+import { resolve, } from 'path';
+import { DefinePlugin, EnvironmentPlugin, optimize } from 'webpack';
 import UglifyJsPlugin from 'uglifyjs-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
-import WXAppWebpackPlugin, {
-    Targets,
-} from 'wxapp-webpack-plugin';
+import MinifyPlugin from 'babel-minify-webpack-plugin';
+import WXAppWebpackPlugin, { Targets } from 'wxapp-webpack-plugin';
 
 const isDev = process.env.NODE_ENV !== 'production';
 
-const relativeFileLoader = (ext = '[ext]') => [{
+const relativeFileLoader = (ext = '[ext]') => {
+    return {
         loader: 'file-loader',
         options: {
-            publicPath: '',
             useRelativePath: true,
             name: `[name].${ext}`,
-            emitFile: false,
-        },
-    },
-    {
-        loader: 'file-loader',
-        options: {
-            publicPath: '',
             context: resolve('src'),
-            name: `[path][name].${ext}`,
         },
-    },
-];
+    };
+};
 
 export default (env = {}) => {
     const target = env.target || 'Wechat';
@@ -49,7 +34,8 @@ export default (env = {}) => {
         },
         target: Targets[target],
         module: {
-            rules: [{
+            rules: [
+                {
                     test: /\.js$/,
                     include: /(src|node_modules)/,
                     use: [{
@@ -60,7 +46,7 @@ export default (env = {}) => {
                     test: /\.less$/,
                     include: /src/,
                     use: [
-                        ...relativeFileLoader('wxss'),
+                        relativeFileLoader('wxss'),
                         {
                             loader: 'less-loader',
                             options: {
@@ -80,31 +66,13 @@ export default (env = {}) => {
                     test: /\.wxml$/,
                     include: resolve('src'),
                     use: [
-                        ...relativeFileLoader('wxml'),
+                        relativeFileLoader('wxml'),
                         {
                             loader: 'wxml-loader',
                             options: {
                                 root: resolve('src'),
-                                minimize: !isDev,
-                            },
-                        },
-                    ],
-                },
-                {
-                    test: /\.wxml$/,
-                    include: /node_modules/, // 用于支持npm版的WxParse
-                    use: [{
-                            loader: 'file-loader',
-                            options: {
-                                useRelativePath: false,
-                                name: '[name].[ext]',
-                            },
-                        },
-                        {
-                            loader: 'wxml-loader',
-                            options: {
-                                root: resolve('src'),
-                                minimize: !isDev,
+                                enforceRelativePath: true,
+                                // minimize: !isDev, 始终有问题算了
                             },
                         },
                     ],
@@ -121,22 +89,17 @@ export default (env = {}) => {
             new WXAppWebpackPlugin({
                 clear: !isDev,
             }),
-            isDev ? null : new UglifyJsPlugin({
+            isDev && new UglifyJsPlugin({
                 parallel: true,
                 sourceMap: false,
-                uglifyOptions: {
-                    ecma: 6,
-                    compress: {
-                        drop_console: true,
-                    },
-                }
             }),
+            isDev && new MinifyPlugin(),
             new optimize.ModuleConcatenationPlugin(),
             new CopyWebpackPlugin([{
                 context: 'src/static',
                 from: '**/*',
                 to: 'static'
-            }, ])
+            },])
             // new IgnorePlugin(/vertx/),
         ].filter(Boolean),
         devtool: isDev ? 'source-map' : false,

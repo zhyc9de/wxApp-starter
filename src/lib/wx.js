@@ -3,12 +3,11 @@
 // 特别指定的wx对象中不进行Promise封装的方法
 // 除了以下不封住的函数
 const noPromiseMethods = [
-    'drawCanvas',
     'canvasToTempFilePath',
     'getBackgroundAudioManager',
     'getRecorderManager',
     'canIUse',
-    'createCanvasContext',
+    'downloadFile',
 ];
 // 还有以on* create* stop* pause* close* hide* 开头的方法
 const noPromiseStartswith = /^(on|create|stop|pause|close|hide)/;
@@ -43,67 +42,59 @@ const promiseWx = {
         return l.slice(0, index).concat(l.slice(index + 1));
     },
 
-    // 封装页面跳转
-    defaultTabDir: 'tab',
+    getCurrentRoute() {
+        return this.getCurrentPage().route;
+    },
+
+    // 获取当前页面
+    getCurrentPage() {
+        const pages = getCurrentPages();
+        if (pages.length > 0) {
+            return pages[pages.length - 1];
+        }
+        return undefined;
+    },
+
+    // 给定绝对路径（不需要包含开头的斜杠）, 尝试从页面栈中拿到这个页面的对象
+    getPageInStack(absPath) {
+        const pages = getCurrentPages();
+        for (let i = 0; i < pages.length; i += 1) {
+            if (pages[i].route === absPath) {
+                return pages[i];
+            }
+        }
+        return null;
+    },
 
     /**
      * 切换切面
-     * 如果是tab页，那么直接switchTab
-     * 如果非tab页，先检测页面栈，
      *
      * @param {string} url 跳转页面
-     * @param {boolean} [reLaunch=false] 是否使用reLaunch
      * @param {object} [query={}] querystring
      * @returns {Promise}
      */
-    go(url, reLaunch = false, query = {}) {
-        let goFunc = reLaunch ? this.reLaunch : this.navigateTo;
-
+    goto(url, query = {}) {
         // 去除开头的'/'
         const routerName = url.charAt(0) === '/' ? url.substr(1) : url;
-        // tab页需要switchTab
-        if (url.startsWith(`pages/${this.defaultTabDir}`)) {
-            goFunc = this.switchTab;
-        } else { // 遍历页面栈
-            const pages = getCurrentPages();
-            for (let i = pages.length - 1; i >= 0; i -= 1) {
-                if (pages[i].route === routerName) {
-                    if (i !== pages.length - 1) {
-                        console.log('后退刷新');
-                        return this.navigateBack({
-                            delta: (pages.length - i) - 1,
-                        });
-                    }
-                    console.log('刷新当前页面');
-                    pages[i].onLoad(query);
-                    pages[i].onShow();
-                    return true;
+        const pages = getCurrentPages();
+        for (let i = pages.length - 1; i >= 0; i -= 1) {
+            if (pages[i].route === routerName) {
+                console.log(`后退跳转: ${url}`);
+                pages[i].options = query;
+                pages[i].onLoad(query);
+                if (i !== pages.length - 1) {
+                    return this.navigateBack({
+                        delta: (pages.length - i) - 1,
+                    });
                 }
+                return true;
             }
         }
-
-        // 真实跳转
-        return goFunc({
+        console.log(`向前跳转: ${url}`);
+        return wx.navigateTo({
             url,
         });
     },
-
-    // 获取默认分享
-    defaultShare() {
-        return {};
-    },
-    curShare: undefined,
-    // 设置临时分享内容
-    setShare(share) {
-        this.curShare = share;
-    },
-    // 获取分享
-    getShare() {
-        const info = this.curShare || Object.assign({}, this.defaultShare());
-        this.curShare = undefined;
-        return info;
-    },
-
 };
 
 Object.keys(wx).forEach((key) => {
@@ -119,7 +110,7 @@ Object.keys(wx).forEach((key) => {
     // 其余方法自动Promise化
     promiseWx[key] = (obj) => {
         const args = obj || {};
-        if (key === 'showToast') { // 给showtoast增加默认参数
+        if (key === 'showToast') { // 给showToast增加默认参数
             if (!args.duration) {
                 args.duration = 1100;
             }
