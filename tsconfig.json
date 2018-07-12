@@ -8,6 +8,6 @@
         "node_modules"
     ],
     "files": [
-        "types/wxp.d.ts"
+        "types/index.d.ts"
     ]
 }
