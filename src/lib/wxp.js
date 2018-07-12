@@ -13,7 +13,7 @@ const noPromiseStartsWith = /^(on|create|stop|pause|close|hide)/;
 // 以 Sync Manager 结尾的方法
 const noPromiseEndsWith = /\w+(Sync|Manager)$/;
 
-const promiseWx = {
+const wxp = {
     // 获取当前页面
     getCurrentPage() {
         const pages = getCurrentPages();
@@ -77,12 +77,12 @@ Object.keys(wx)
             noPromiseEndsWith.test(key)
         ) {
             // 不进行Promise封装
-            promiseWx[key] = wx[key];
+            wxp[key] = wx[key];
             return;
         }
 
         // 其余方法自动Promise化
-        promiseWx[key] = (obj) => {
+        wxp[key] = (obj) => {
             const args = obj || {};
             if (key === 'showToast') { // 给showToast增加默认参数
                 if (!args.duration) {
@@ -102,4 +102,4 @@ Object.keys(wx)
         };
     });
 
-export default promiseWx;
+export default wxp;

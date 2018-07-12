@@ -1,4 +1,4 @@
-import { WxPage } from 'lib';
+import { wxp, WxPage } from 'lib';
 
 WxPage({
     data: {
@@ -6,6 +6,7 @@ WxPage({
     },
 
     onInput(e) {
+        console.log(wxp);
         this.setData({
             textLen: e.detail.value.length,
         });
