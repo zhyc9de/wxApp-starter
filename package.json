@@ -29,5 +29,8 @@
         "webpack": "^3.12.0",
         "wxapp-webpack-plugin": "^0.17.2",
         "wxml-loader": "^0.2.1"
+    },
+    "dependencies": {
+        "query-string": "^6.1.0"
     }
 }

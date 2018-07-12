@@ -1,4 +1,4 @@
-import { WxComponent } from '../../lib';
+import { WxComponent } from 'lib';
 
 WxComponent({
     data: {},
