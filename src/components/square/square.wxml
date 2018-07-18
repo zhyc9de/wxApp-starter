@@ -1,3 +1,1 @@
-<view class="square" bindtap="labeltap">
-{{ showLen }}
-</view>
+/Users/on10n/workspace/opensource/wxApp-starter/src_modules/base/components/square/square.wxml

@@ -1,13 +1,1 @@
-import wxp from './wxp';
-import util from './util';
-import event from './event';
-import WxPage from './page';
-import WxComponent from './component';
-
-module.exports = {
-    wxp,
-    util,
-    event,
-    WxPage,
-    WxComponent,
-};
+/Users/on10n/workspace/opensource/wxApp-starter/src_modules/base/lib/index.js
