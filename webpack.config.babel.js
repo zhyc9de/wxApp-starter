@@ -65,17 +65,19 @@ const mkdirsSync = (dir) => {
 export default (env = {}) => {
     const mode = process.env.mode;
     if (process.env.mode !== '') {
+        const basePath = resolve('src_modules/base');
+        const pkgPath = resolve(`src_modules/${mode}`);
         console.log(`***********      link package ${mode} start         ***********`);
-        if (!fs.existsSync('src_modules/base')) {
-            throw new Error('init src_modules/base');
+        if (!fs.existsSync(basePath)) {
+            throw new Error(`init ${basePath}`);
         }
-        if (!fs.existsSync(`src_modules/${mode}`)) {
-            throw new Error(`cannot find src_modules/${mode}`);
+        if (!fs.existsSync(pkgPath)) {
+            throw new Error(`cannot find ${pkgPath}`);
         }
         // 清空src
-        rimraf.sync('src');
+        rimraf.sync(resolve('src'));
         // 先软连接基础包
-        const base = readDirSync('src_modules/base');
+        const base = readDirSync(basePath);
         base.dirs.forEach((dir) => {
             // console.log(dir);
             mkdirsSync(dir.replace('src_modules/base', 'src'));
@@ -87,7 +89,7 @@ export default (env = {}) => {
         });
 
         // 遍历马甲包，把文件覆盖上去
-        const pkg = readDirSync(`src_modules/${mode}`);
+        const pkg = readDirSync(pkgPath);
         pkg.files.forEach((file) => {
             const baseFile = file.replace(`src_modules/${mode}`, 'src');
             if (fs.existsSync(baseFile)) {
@@ -101,7 +103,7 @@ export default (env = {}) => {
         console.log(`***********      link package ${mode} complete      ***********\n\n\n\n\n\n`);
         // 开始监听文件夹
         chokidar
-            .watch(`src_modules/${mode}`)
+            .watch(pkgPath)
             .on('add', path => console.log(`File ${path} has been added`))
             .on('addDir', path => console.log(`Directory ${path} has been added`));
     }
