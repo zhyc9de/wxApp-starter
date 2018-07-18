@@ -1,7 +1,7 @@
 import fs from 'fs';
 import rimraf from 'rimraf';
 import chokidar from 'chokidar';
-import { resolve, dirname, relative } from 'path';
+import { resolve, dirname, relative, normalize } from 'path';
 import { DefinePlugin, EnvironmentPlugin, optimize } from 'webpack';
 import UglifyJsPlugin from 'uglifyjs-webpack-plugin';
 import MinifyPlugin from 'babel-minify-webpack-plugin';
@@ -15,7 +15,7 @@ const relativeFileLoader = (ext = '[ext]') => ({
     options: {
         // useRelativePath: true,
         name(file) {
-            const relativePath = relative(__dirname, file);
+            const relativePath = normalize(relative(__dirname, file));
             const path = relativePath.split('/').slice(2, -1).join('/');
             // console.log(relativePath, path);
             return `${path}/[name].${ext}`;
@@ -35,13 +35,13 @@ const readDirSync = (path) => {
         const info = fs.statSync(elePath);
         if (info.isDirectory()) {
             // console.log(`dir: ${elePath}`);
-            dirs.push(elePath);
+            dirs.push(normalize(elePath));
             tmp = readDirSync(elePath);
             files = files.concat(tmp.files);
             dirs = dirs.concat(tmp.dirs);
         } else {
             // console.log(`file: ${elePath}`);
-            files.push(elePath);
+            files.push(normalize(elePath));
         }
     });
     return {
