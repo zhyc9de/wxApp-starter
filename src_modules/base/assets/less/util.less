@@ -1,0 +1,26 @@
+// button还原样式
+.btn-inherit() {
+    line-height: 1;
+    background: inherit;
+    margin: 0;
+    padding: 0;
+    border-radius: 0;
+    &::after {
+        border: 0;
+    }
+}
+
+// 单行文本省略
+.inline-text-hidden() {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+// 多行文本省略
+.multi-text-hidden(@n) {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: @n;
+    overflow: hidden;
+}

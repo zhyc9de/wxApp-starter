@@ -1,0 +1,15 @@
+{
+    "pages": [
+        "pages/index/index"
+    ],
+    "window": {
+        "navigationBarTitleText": "wxApp Starter",
+        "navigationBarBackgroundColor": "#3f9dfc",
+        "navigationBarTextStyle": "white",
+        "enablePullDownRefresh": false
+    },
+    "networkTimeout": {
+        "request": 20000
+    },
+    "debug": true
+}
