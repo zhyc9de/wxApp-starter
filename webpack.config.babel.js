@@ -1,7 +1,7 @@
 import fs from 'fs';
 import rimraf from 'rimraf';
 import chokidar from 'chokidar';
-import { resolve, dirname, relative, normalize } from 'path';
+import { resolve, dirname, relative, sep } from 'path';
 import { DefinePlugin, EnvironmentPlugin, optimize } from 'webpack';
 import UglifyJsPlugin from 'uglifyjs-webpack-plugin';
 import MinifyPlugin from 'babel-minify-webpack-plugin';
@@ -15,10 +15,10 @@ const relativeFileLoader = (ext = '[ext]') => ({
     options: {
         // useRelativePath: true,
         name(file) {
-            const relativePath = normalize(relative(__dirname, file));
-            const path = relativePath.split('/').slice(2, -1).join('/');
+            const relativePath = relative(__dirname, file);
+            const path = relativePath.split(sep).slice(2, -1).join(sep);
             // console.log(relativePath, path);
-            return `${path}/[name].${ext}`;
+            return `${path}${sep}[name].${ext}`;
         },
         context: resolve('src'),
     },
@@ -31,17 +31,17 @@ const readDirSync = (path) => {
 
     const pa = fs.readdirSync(path);
     pa.forEach((ele) => {
-        const elePath = resolve(`${path}/${ele}`);
+        const elePath = resolve(`${path}${sep}${ele}`);
         const info = fs.statSync(elePath);
         if (info.isDirectory()) {
             // console.log(`dir: ${elePath}`);
-            dirs.push(normalize(elePath));
+            dirs.push(elePath);
             tmp = readDirSync(elePath);
             files = files.concat(tmp.files);
             dirs = dirs.concat(tmp.dirs);
         } else {
             // console.log(`file: ${elePath}`);
-            files.push(normalize(elePath));
+            files.push(elePath);
         }
     });
     return {
@@ -65,8 +65,8 @@ const mkdirsSync = (dir) => {
 export default (env = {}) => {
     const mode = process.env.mode;
     if (process.env.mode !== '') {
-        const basePath = resolve('src_modules/base');
-        const pkgPath = resolve(`src_modules/${mode}`);
+        const basePath = resolve(`src_modules${sep}base`);
+        const pkgPath = resolve(`src_modules${sep}${mode}`);
         console.log(`***********      link package ${mode} start         ***********`);
         if (!fs.existsSync(basePath)) {
             throw new Error(`init ${basePath}`);
@@ -80,18 +80,18 @@ export default (env = {}) => {
         const base = readDirSync(basePath);
         base.dirs.forEach((dir) => {
             // console.log(dir);
-            mkdirsSync(dir.replace('src_modules/base', 'src'));
+            mkdirsSync(dir.replace(`src_modules${sep}base`, 'src'));
         });
         base.files.forEach((file) => {
             // console.log(file);
-            const baseFile = file.replace('src_modules/base', 'src');
+            const baseFile = file.replace(`src_modules${sep}base`, 'src');
             fs.symlinkSync(file, baseFile);
         });
 
         // 遍历马甲包，把文件覆盖上去
         const pkg = readDirSync(pkgPath);
         pkg.files.forEach((file) => {
-            const baseFile = file.replace(`src_modules/${mode}`, 'src');
+            const baseFile = file.replace(`src_modules${sep}${mode}`, 'src');
             if (fs.existsSync(baseFile)) {
                 rimraf.sync(baseFile);
                 fs.symlinkSync(file, baseFile);
