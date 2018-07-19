@@ -1,1 +1,1 @@
-/Users/on10n/workspace/opensource/wxApp-starter/src_modules/base/pages/index/index.js
+/Users/on10n/workspace/opensource/wxApp-starter/src_modules/a/pages/index/index.js

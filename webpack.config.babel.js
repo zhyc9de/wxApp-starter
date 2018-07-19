@@ -1,7 +1,7 @@
 import fs from 'fs';
 import rimraf from 'rimraf';
 import chokidar from 'chokidar';
-import { resolve, dirname, relative, sep } from 'path';
+import { dirname, relative, resolve, sep } from 'path';
 import { DefinePlugin, EnvironmentPlugin, optimize } from 'webpack';
 import UglifyJsPlugin from 'uglifyjs-webpack-plugin';
 import MinifyPlugin from 'babel-minify-webpack-plugin';
@@ -16,7 +16,12 @@ const relativeFileLoader = (ext = '[ext]') => ({
         // useRelativePath: true,
         name(file) {
             const relativePath = relative(__dirname, file);
-            const path = relativePath.split(sep).slice(2, -1).join(sep);
+            if (!relativePath.startsWith('src_modules/')) { // 其他文件正常处理
+                return `[path][name].${ext}`;
+            }
+            const path = relativePath.split(sep)
+                .slice(2, -1)
+                .join(sep);
             // console.log(relativePath, path);
             return `${path}${sep}[name].${ext}`;
         },
@@ -120,51 +125,52 @@ export default (env = {}) => {
         },
         target: Targets[target],
         module: {
-            rules: [{
-                test: /\.js$/,
-                include: /(src|node_modules)/,
-                use: [{
-                    loader: 'babel-loader?cacheDirectory=true',
-                }],
-            },
-            {
-                test: /\.less$/,
-                include: /src/,
-                use: [
-                    relativeFileLoader('wxss'),
-                    {
-                        loader: 'less-loader',
-                        options: {
-                            includePaths: [resolve('src')],
+            rules: [
+                {
+                    test: /\.js$/,
+                    include: /(src|node_modules)/,
+                    use: [
+                        {
+                            loader: 'babel-loader?cacheDirectory=true',
+                        }],
+                },
+                {
+                    test: /\.less$/,
+                    include: /src/,
+                    use: [
+                        relativeFileLoader('wxss'),
+                        {
+                            loader: 'less-loader',
+                            options: {
+                                includePaths: [resolve('src')],
+                            },
                         },
-                    },
-                ],
-            },
-            {
-                test: /\.(png|jpg|gif)$/,
-                include: /src/,
-                use: relativeFileLoader(),
-            },
-            {
-                test: /\.(json)$/,
-                include: /src/,
-                use: relativeFileLoader(),
-            },
-            {
-                test: /\.wxml$/,
-                include: resolve('src'),
-                use: [
-                    relativeFileLoader('wxml'),
-                    {
-                        loader: 'wxml-loader',
-                        options: {
-                            root: resolve('src'),
-                            enforceRelativePath: true,
-                            // minimize: !isDev, 始终有问题算了
+                    ],
+                },
+                {
+                    test: /\.(png|jpg|gif)$/,
+                    include: /src/,
+                    use: relativeFileLoader(),
+                },
+                {
+                    test: /\.(json)$/,
+                    include: /src/,
+                    use: relativeFileLoader(),
+                },
+                {
+                    test: /\.wxml$/,
+                    include: resolve('src'),
+                    use: [
+                        relativeFileLoader('wxml'),
+                        {
+                            loader: 'wxml-loader',
+                            options: {
+                                root: resolve('src'),
+                                enforceRelativePath: false,
+                            },
                         },
-                    },
-                ],
-            },
+                    ],
+                },
             ],
         },
         plugins: [
@@ -184,15 +190,17 @@ export default (env = {}) => {
             }),
             isDev && new MinifyPlugin(),
             new optimize.ModuleConcatenationPlugin(),
-            new CopyWebpackPlugin([{
-                context: 'src/static',
-                from: '**/*',
-                to: 'static',
-            }]),
+            new CopyWebpackPlugin([
+                {
+                    context: 'src/static',
+                    from: '**/*',
+                    to: 'static',
+                }]),
         ].filter(Boolean),
         devtool: isDev ? 'source-map' : false,
         resolve: {
             modules: [resolve('src'), 'node_modules'],
+            symlinks: false,
         },
         watchOptions: {
             ignored: /dist|manifest/,

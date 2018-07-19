@@ -1,4 +1,4 @@
-import { wxp, WxPage } from 'lib';
+import { wxp, WxPage } from '../../lib';
 
 WxPage({
     data: {

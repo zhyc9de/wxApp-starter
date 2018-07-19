@@ -1,5 +1,5 @@
 <view class="container">
-    <image mode="widthFix" src="../../../../src/static/resource/home_bg1.png"></image>
+    <image mode="widthFix" src="/static/resource/home_bg1.png"></image>
     <input class="input" bindinput="onInput"/>
     <square len="{{ textLen }}" bind:hadClick="hadClick"></square>
     <view>偷偷拿到正确字数{{ playing.title }}</view>
