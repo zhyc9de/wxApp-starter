@@ -106,8 +106,7 @@ export default (env = {}) => {
             }
         });
         console.log(`***********      link package ${mode} complete      ***********\n\n\n\n\n\n`);
-        // 开始监听文件夹
-        if (!isDev) {
+        if (isDev) { // 开始监听文件夹
             chokidar
                 .watch(pkgPath)
                 .on('add', path => console.log(`File ${path} has been added`))
@@ -123,7 +122,7 @@ export default (env = {}) => {
         output: {
             filename: '[name].js',
             publicPath: '/',
-            path: resolve('dist'),
+            path: resolve(`dist/${mode}`),
         },
         target: Targets[target],
         module: {
