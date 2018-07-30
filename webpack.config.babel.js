@@ -107,10 +107,12 @@ export default (env = {}) => {
         });
         console.log(`***********      link package ${mode} complete      ***********\n\n\n\n\n\n`);
         // 开始监听文件夹
-        chokidar
-            .watch(pkgPath)
-            .on('add', path => console.log(`File ${path} has been added`))
-            .on('addDir', path => console.log(`Directory ${path} has been added`));
+        if (!isDev) {
+            chokidar
+                .watch(pkgPath)
+                .on('add', path => console.log(`File ${path} has been added`))
+                .on('addDir', path => console.log(`Directory ${path} has been added`));
+        }
     }
 
     const target = env.target || 'Wechat';
@@ -183,12 +185,11 @@ export default (env = {}) => {
             new WXAppWebpackPlugin({
                 clear: !isDev,
             }),
-            isDev &&
-            new UglifyJsPlugin({
+            !isDev && new UglifyJsPlugin({
                 parallel: true,
                 sourceMap: false,
             }),
-            isDev && new MinifyPlugin(),
+            !isDev && new MinifyPlugin(),
             new optimize.ModuleConcatenationPlugin(),
             new CopyWebpackPlugin([
                 {
@@ -200,7 +201,7 @@ export default (env = {}) => {
         devtool: isDev ? 'source-map' : false,
         resolve: {
             modules: [resolve('src'), 'node_modules'],
-            symlinks: false,
+            // symlinks: false,
         },
         watchOptions: {
             ignored: /dist|manifest/,
