@@ -89,11 +89,11 @@ export default (env = {}) => {
             new WXAppWebpackPlugin({
                 clear: !isDev,
             }),
-            isDev && new UglifyJsPlugin({
+            !isDev && new UglifyJsPlugin({
                 parallel: true,
                 sourceMap: false,
             }),
-            isDev && new MinifyPlugin(),
+            !isDev && new MinifyPlugin(),
             new optimize.ModuleConcatenationPlugin(),
             new CopyWebpackPlugin([
                 {
